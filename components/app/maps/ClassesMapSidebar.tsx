@@ -35,17 +35,27 @@ function MapBoundsFitter({ points }: { points: [number, number][] }) {
   useEffect(() => {
     if (!L || points.length === 0) return;
 
-    if (points.length === 1) {
-      // Single point - center with comfortable zoom for context
-      map.setView(points[0], 14, { animate: true });
-    } else {
-      // Multiple points - calculate bounding box and fit all markers in view
-      const bounds = L.latLngBounds(points);
-      map.fitBounds(bounds, {
-        padding: [40, 40], // px buffer from edges
-        maxZoom: 15, // don't zoom in too close
-        animate: true,
-      });
+    // Guard: ensure the map container is still mounted in the DOM
+    // before attempting any animation. Leaflet throws '_leaflet_pos'
+    // if it tries to animate on an already-unmounted pane element.
+    const container = map.getContainer();
+    if (!container || !document.contains(container)) return;
+
+    try {
+      if (points.length === 1) {
+        // Single point - center with comfortable zoom for context
+        map.setView(points[0], 14, { animate: false });
+      } else {
+        // Multiple points - calculate bounding box and fit all markers in view
+        const bounds = L.latLngBounds(points);
+        map.fitBounds(bounds, {
+          padding: [40, 40], // px buffer from edges
+          maxZoom: 15, // don't zoom in too close
+          animate: false,
+        });
+      }
+    } catch {
+      // Silently ignore errors caused by the map unmounting mid-animation
     }
   }, [L, map, points]);
 
