@@ -1,9 +1,10 @@
-import { ToolLoopAgent } from "ai";
+import { ToolLoopAgent, gateway } from "ai";
 import { aiTools } from "./tools";
 
-// Create the fitness assistant agent using AI SDK 6 Beta ToolLoopAgent
+// Using the built-in gateway from the ai package — reads AI_GATEWAY_API_KEY from env
+// and routes to Google Gemini 2.0 Flash (free tier, no extra package needed)
 export const fitnessAgent = new ToolLoopAgent({
-  model: "openai/gpt-4o-mini",
+  model: gateway.languageModel("google/gemini-2.0-flash"),
   instructions: `You are a helpful fitness class booking assistant for FitPass. You help users:
 - Find and discover fitness classes (yoga, HIIT, pilates, cycling, etc.)
 - Learn about available venues and their locations
