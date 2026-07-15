@@ -153,13 +153,25 @@ export async function getUserPreferences(): Promise<ProfilePreferences | null> {
       params: { clerkId: userId },
     });
 
-    if (!userProfile.data?.location || !userProfile.data?.searchRadius) {
+    const loc = userProfile.data?.location;
+    const searchRadius = userProfile.data?.searchRadius;
+
+    if (
+      !loc ||
+      typeof loc.lat !== "number" ||
+      typeof loc.lng !== "number" ||
+      !searchRadius
+    ) {
       return null;
     }
 
     return {
-      location: userProfile.data.location,
-      searchRadius: userProfile.data.searchRadius,
+      location: {
+        lat: loc.lat,
+        lng: loc.lng,
+        address: loc.address ?? "",
+      },
+      searchRadius,
     };
   } catch (error) {
     console.error("Get preferences error:", error);
