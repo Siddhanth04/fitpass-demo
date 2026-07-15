@@ -352,26 +352,7 @@ export const getUserBookings = tool({
     return {
       count: bookings.length,
       type,
-      bookings: bookings.map(
-        (b: {
-          _id: string;
-          status: string;
-          createdAt?: string;
-          attendedAt?: string;
-          classSession?: {
-            _id: string;
-            startTime: string;
-            activity?: {
-              name: string;
-              instructor: string;
-              duration: number;
-            };
-            venue?: {
-              name: string;
-              city: string;
-            };
-          };
-        }) => ({
+      bookings: bookings.map((b) => ({
           id: b._id,
           sessionId: b.classSession?._id,
           status: b.status,
@@ -383,8 +364,7 @@ export const getUserBookings = tool({
           dateTime: b.classSession?.startTime,
           venue: b.classSession?.venue?.name,
           city: b.classSession?.venue?.city,
-        })
-      ),
+        })),
     };
   },
 });
